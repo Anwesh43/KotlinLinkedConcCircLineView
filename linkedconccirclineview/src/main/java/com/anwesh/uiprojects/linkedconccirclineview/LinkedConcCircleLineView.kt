@@ -173,4 +173,26 @@ class LinkedConcCircleLineView(ctx : Context) : View(ctx) {
             curr.startUpdating(startcb)
         }
     }
+
+    data class Renderer(var view : LinkedConcCircleLineView) {
+
+        val ccl : LinkedConcCircleLine = LinkedConcCircleLine(0)
+
+        val animator : CCLAnimator = CCLAnimator(view)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            ccl.draw(canvas, paint)
+            animator.update {
+                ccl.update {
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            ccl.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
