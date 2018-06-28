@@ -110,18 +110,20 @@ class LinkedConcCircleLineView(ctx : Context) : View(ctx) {
             val w : Float = canvas.width.toFloat()
             val h : Float = canvas.height.toFloat()
             val gap : Float = w / CCL_NODES
+            prev?.draw(canvas, paint)
             paint.color = Color.WHITE
             paint.style = Paint.Style.STROKE
             paint.strokeWidth = Math.min(w, h) / 60
             paint.strokeCap = Paint.Cap.ROUND
-            val r : Float = gap/5
-            val r1 : Float = gap/7
+            val r : Float = gap/3
+            val r1 : Float = gap/6
             canvas.save()
             canvas.translate(i * gap + gap * state.scales[0], h/2)
             canvas.drawCircle(0f, 0f, r, paint)
             canvas.drawCircle(0f, 0f, r1, paint)
             val index : Int = i % 2
             val scale : Float = index + (1 - 2 * index) * state.scales[1]
+            paint.strokeWidth = Math.min(w, h) / 120
             for (i in 0..(360 * scale).toInt()) {
                 val x : Float = r * Math.cos(i * Math.PI/180).toFloat()
                 val y : Float = r * Math.sin(i * Math.PI/180).toFloat()
@@ -184,6 +186,7 @@ class LinkedConcCircleLineView(ctx : Context) : View(ctx) {
         val animator : CCLAnimator = CCLAnimator(view)
 
         fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(Color.parseColor("#212121"))
             ccl.draw(canvas, paint)
             animator.update {
                 ccl.update {
@@ -203,7 +206,7 @@ class LinkedConcCircleLineView(ctx : Context) : View(ctx) {
         fun create(activity : Activity) : LinkedConcCircleLineView  {
             val view : LinkedConcCircleLineView = LinkedConcCircleLineView(activity)
             activity.setContentView(view)
-            return view 
+            return view
         }
     }
 }
