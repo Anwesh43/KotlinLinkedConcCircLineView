@@ -149,4 +149,28 @@ class LinkedConcCircleLineView(ctx : Context) : View(ctx) {
             return this
         }
     }
+
+    data class LinkedConcCircleLine(var i : Int) {
+
+        private var curr : CCLNode = CCLNode(0)
+
+        private var dir : Int = 1
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            curr.draw(canvas, paint)
+        }
+
+        fun update(stopcb : (Float) -> Unit) {
+            curr.update {
+                curr = curr.getNext(dir) {
+                    dir *= -1
+                }
+                stopcb(it)
+            }
+        }
+
+        fun startUpdating(startcb : () -> Unit) {
+            curr.startUpdating(startcb)
+        }
+    }
 }
