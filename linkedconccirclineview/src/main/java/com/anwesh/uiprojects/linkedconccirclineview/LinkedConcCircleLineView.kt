@@ -6,9 +6,12 @@ package com.anwesh.uiprojects.linkedconccirclineview
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.view.View
 import android.view.MotionEvent
+
+val CCL_NODES : Int = 5
 
 class LinkedConcCircleLineView(ctx : Context) : View(ctx) {
 
@@ -78,6 +81,72 @@ class LinkedConcCircleLineView(ctx : Context) : View(ctx) {
             if (animated) {
                 animated = false
             }
+        }
+    }
+
+    data class CCLNode (var i : Int) {
+
+        private var next : CCLNode? = null
+
+        private var prev : CCLNode? = null
+
+        private val state : CCLState = CCLState()
+
+        init {
+            addNeighbor()
+        }
+
+        fun addNeighbor() {
+            if (i < CCL_NODES - 1) {
+                next = CCLNode(i +1 )
+                next?.prev = this
+            }
+        }
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            val w : Float = canvas.width.toFloat()
+            val h : Float = canvas.height.toFloat()
+            val gap : Float = w / CCL_NODES
+            paint.color = Color.WHITE
+            paint.style = Paint.Style.STROKE
+            paint.strokeWidth = Math.min(w, h) / 60
+            paint.strokeCap = Paint.Cap.ROUND
+            val r : Float = gap/5
+            val r1 : Float = gap/7
+            canvas.save()
+            canvas.translate(i * gap + gap * state.scales[0], h/2)
+            canvas.drawCircle(0f, 0f, r, paint)
+            canvas.drawCircle(0f, 0f, r1, paint)
+            val index : Int = i % 2
+            val scale : Float = index + (1 - 2 * index) * state.scales[1]
+            for (i in 0..(360 * scale).toInt()) {
+                val x : Float = r * Math.cos(i * Math.PI/180).toFloat()
+                val y : Float = r * Math.sin(i * Math.PI/180).toFloat()
+                val x1 : Float = r1 * Math.cos(i * Math.PI/180).toFloat()
+                val y1 : Float = r1 * Math.sin(i * Math.PI/180).toFloat()
+                canvas.drawLine(x, y, x1, y1, paint)
+            }
+            canvas.restore()
+        }
+
+        fun update(stopcb : (Float) -> Unit) {
+            state.update(stopcb)
+        }
+
+        fun startUpdating(startcb : () -> Unit) {
+            state.startUpdating(startcb)
+        }
+
+        fun getNext(dir : Int, cb : () -> Unit) : CCLNode {
+            var curr : CCLNode? = prev
+            if (dir == 1) {
+                curr = next
+            }
+            if (curr != null) {
+                return curr
+            }
+            cb()
+            return this
         }
     }
 }
