@@ -4,6 +4,7 @@ package com.anwesh.uiprojects.linkedconccirclineview
  * Created by anweshmishra on 28/06/18.
  */
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -195,6 +196,14 @@ class LinkedConcCircleLineView(ctx : Context) : View(ctx) {
             ccl.startUpdating {
                 animator.start()
             }
+        }
+    }
+
+    companion object {
+        fun create(activity : Activity) : LinkedConcCircleLineView  {
+            val view : LinkedConcCircleLineView = LinkedConcCircleLineView(activity)
+            activity.setContentView(view)
+            return view 
         }
     }
 }
